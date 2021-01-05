@@ -4,14 +4,14 @@ terraform {
 }
 
 provider "aws" {
-    region = "eu-west-2"
+  region = var.aws_region
 }
 
 resource "aws_instance" "jenkins_master" {
     ami                         = "ami-0089b31e09ac3fffc" # Amaxon Linux 2 AMI from eu-west-2 region
     count                       = 1
-    instance_type               = "t2.micro"
-    key_name                    = "JenkinsKeyPair"
+    instance_type               = var.jenkins_master
+    key_name                    = var.key_name
     associate_public_ip_address = true
     vpc_security_group_ids      = [module.http_sg.this_security_group_id] #["sg-0f89322a79aa4a404"] # ensure this Security Group has port 9091 opened
     user_data                   = templatefile("${path.cwd}/master-bootstrap.tmpl", {})
@@ -26,8 +26,8 @@ resource "aws_instance" "jenkins_master" {
 resource "aws_instance" "jenkins_slave" {
     ami                         = "ami-0089b31e09ac3fffc" # Amaxon Linux 2 AMI from eu-west-2 region
     count                       = 2
-    instance_type               = "t2.micro"
-    key_name                    = "JenkinsKeyPair"
+    instance_type               = var.jenkins_slave
+    key_name                    = var.key_name
     associate_public_ip_address = true
     vpc_security_group_ids      = [module.http_sg.this_security_group_id] #["sg-0f89322a79aa4a404"] # ensure this Security Group has port 9091 opened
     user_data                   = templatefile("${path.cwd}/slave-bootstrap.tmpl", {})

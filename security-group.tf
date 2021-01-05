@@ -26,10 +26,14 @@ module "http_sg" {
 
   ingress_cidr_blocks = ["0.0.0.0/0"]
 
-  ingress_with_source_security_group_id = [
+  ingress_rules            = ["https-443-tcp"]
+  ingress_with_cidr_blocks = [
     {
-      rule                     = "https-443-tcp"
-      source_security_group_id = data.aws_security_group.default.id
+      from_port   = 9091
+      to_port     = 9091
+      protocol    = "tcp"
+      description = "Jenkins ports"
+      cidr_blocks = "0.0.0.0/0"
     },
   ]
 }
